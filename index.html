@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102a43">
+  <title>用藥時程｜資料庫偵探</title>
+  <style>
+    :root {
+      --ink: #102a43;
+      --muted: #627d98;
+      --navy: #0b3a53;
+      --teal: #087f8c;
+      --teal-light: #dff4f3;
+      --cream: #f7f6f2;
+      --white: #ffffff;
+      --line: #dce7ec;
+      --shadow: 0 18px 50px rgba(16, 42, 67, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: Inter, "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+      line-height: 1.6;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 88% 8%, rgba(8, 127, 140, 0.12), transparent 22rem),
+        linear-gradient(135deg, #f4f8f7 0%, var(--cream) 100%);
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin-inline: auto;
+    }
+
+    header {
+      padding: 28px 0 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--navy);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 14px;
+      color: white;
+      background: var(--teal);
+      box-shadow: 0 8px 20px rgba(8, 127, 140, 0.24);
+    }
+
+    main { padding-bottom: 48px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: end;
+      min-height: 190px;
+      margin-bottom: 24px;
+      padding: 38px 42px;
+      border-radius: 28px;
+      color: white;
+      background:
+        linear-gradient(120deg, rgba(11, 58, 83, 0.98), rgba(8, 127, 140, 0.88)),
+        var(--navy);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -70px;
+      bottom: -120px;
+      width: 300px;
+      height: 300px;
+      border: 42px solid rgba(255, 255, 255, 0.07);
+      border-radius: 50%;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #bfe8e6;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 700px;
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.7rem);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+    }
+
+    .hero-note {
+      position: relative;
+      z-index: 1;
+      justify-self: end;
+      max-width: 260px;
+      margin: 0 36px 4px 0;
+      color: #d8eff0;
+      font-size: 0.95rem;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.72fr) minmax(360px, 1.28fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    section {
+      border: 1px solid rgba(220, 231, 236, 0.9);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 10px 35px rgba(16, 42, 67, 0.07);
+      backdrop-filter: blur(8px);
+    }
+
+    .control-panel, .schedule-panel { padding: 28px; }
+
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--teal);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .step-label::before {
+      content: "";
+      width: 28px;
+      height: 2px;
+      background: var(--teal);
+    }
+
+    h2 {
+      margin: 0 0 20px;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 750;
+    }
+
+    select, input {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      background: white;
+      color: var(--ink);
+      font: inherit;
+      transition: border-color 160ms, box-shadow 160ms, transform 160ms;
+    }
+
+    select, input { padding: 10px 12px; }
+
+    select:focus, input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(8, 127, 140, 0.11);
+    }
+
+    button {
+      min-height: 48px;
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 18px;
+      background: var(--navy);
+      color: white;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(11, 58, 83, 0.16);
+      transition: transform 160ms, background 160ms, box-shadow 160ms;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: var(--teal);
+      box-shadow: 0 12px 24px rgba(8, 127, 140, 0.2);
+    }
+
+    button:disabled { cursor: not-allowed; opacity: 0.55; }
+
+    #read { width: 100%; margin-top: 14px; }
+
+    #status {
+      min-height: 24px;
+      margin: 16px 0 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f1f6f7;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    #status:empty { display: none; }
+
+    .schedule-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .schedule-heading h2 { margin: 0; }
+
+    .count-badge {
+      display: none;
+      flex: 0 0 auto;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--teal-light);
+      color: #17636a;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    #list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    #list:empty::before {
+      content: "查詢後，此處會顯示用藥時程";
+      display: grid;
+      min-height: 170px;
+      place-items: center;
+      border: 1px dashed #bfd0d6;
+      border-radius: 16px;
+      color: var(--muted);
+      background: #f9fbfb;
+      text-align: center;
+    }
+
+    #list li {
+      position: relative;
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+      animation: reveal 260ms ease-out both;
+    }
+
+    #list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 16px;
+      bottom: 16px;
+      width: 3px;
+      border-radius: 0 4px 4px 0;
+      background: var(--teal);
+    }
+
+    .schedule-time {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .schedule-info strong {
+      display: block;
+      font-size: 1.02rem;
+    }
+
+    .schedule-info span {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    #create {
+      margin-top: 24px;
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+    }
+
+    #create[hidden] { display: none; }
+
+    #form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    #form button { align-self: end; }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 24px, 1120px); }
+      header { padding-top: 18px; }
+      .hero { grid-template-columns: 1fr; padding: 30px 24px; }
+      .hero-note { justify-self: start; margin: 16px 0 0; }
+      .workspace { grid-template-columns: 1fr; }
+      #form { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">Rx</span>
+      <span>DATABASE LAB</span>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="hero">
+      <div>
+        <p class="eyebrow">第 10 週實驗室</p>
+        <h1>用藥時程｜資料庫偵探</h1>
+      </div>
+      <p class="hero-note">追蹤資料流向，並親手在資料庫中新增與查詢時程。</p>
+    </div>
+
+    <div class="workspace">
+      <section class="control-panel">
+        <span class="step-label">Step 01</span>
+        <h2>找出資料從哪裡來</h2>
+        <label class="field">測試使用者
+          <select id="user" disabled></select>
+        </label>
+        <button id="read" disabled type="button">查詢時程</button>
+        <p id="status" role="status" aria-live="polite">請先查詢。</p>
+      </section>
+
+      <section class="schedule-panel">
+        <div class="schedule-heading">
+          <div>
+            <span class="step-label">Results</span>
+            <h2>用藥時程清單</h2>
+          </div>
+          <span id="count" class="count-badge"></span>
+        </div>
+
+        <ul id="list"></ul>
+
+        <section id="create" hidden>
+          <span class="step-label">Step 02</span>
+          <h2>留下可重新查到的線索</h2>
+          <form id="form">
+            <label class="field">測試藥名
+              <input name="name" maxlength="50" required placeholder="例如：維生素C">
+            </label>
+            <label class="field">劑量
+              <input name="dose" maxlength="20" required placeholder="例如：100mg">
+            </label>
+            <label class="field">時間
+              <input name="time" type="time" required>
+            </label>
+            <label class="field">頻率
+              <input name="frequency" maxlength="20" placeholder="例如：每日一次">
+            </label>
+            <button type="submit">新增時程</button>
+          </form>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const user = document.querySelector('#user');
+    const status = document.querySelector('#status');
+    const list = document.querySelector('#list');
+    const form = document.querySelector('#form');
+    const create = document.querySelector('#create');
+    const read = document.querySelector('#read');
+    const count = document.querySelector('#count');
+
+    async function api(path, options) {
+      const response = await fetch('/api/schedules' + path, options);
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
+      return result;
+    }
+
+    async function lookup() {
+      create.hidden = true;
+      list.replaceChildren();
+      count.style.display = 'none';
+      const rows = await api('?userId=' + user.value);
+
+      for (const row of rows) {
+        const item = document.createElement('li');
+        const time = document.createElement('span');
+        const info = document.createElement('div');
+        const name = document.createElement('strong');
+        const details = document.createElement('span');
+
+        time.className = 'schedule-time';
+        info.className = 'schedule-info';
+        time.textContent = row.服用時間 || '—';
+        name.textContent = row.藥名 || '未命名藥品';
+        details.textContent = [row.劑量, row.頻率].filter(Boolean).join(' · ') || '未提供劑量或頻率';
+
+        info.append(name, details);
+        item.append(time, info);
+        list.append(item);
+      }
+
+      status.textContent = rows.length ? '查到 ' + rows.length + ' 筆時程。' : '目前沒有時程。';
+      if (rows.length) {
+        count.textContent = rows.length + ' 筆';
+        count.style.display = 'inline-flex';
+      }
+      create.hidden = false;
+    }
+
+    async function run(task) {
+      read.disabled = user.disabled = form.querySelector('button').disabled = true;
+      try { await task(); } catch (error) { status.textContent = error.message; }
+      finally { read.disabled = user.disabled = form.querySelector('button').disabled = false; }
+    }
+
+    async function loadUsers() {
+      try {
+        const response = await fetch('/api/users');
+        const users = await response.json();
+        if (!response.ok) throw new Error(users.error);
+        for (const person of users) user.add(new Option(person.name, person.id));
+        read.disabled = user.disabled = users.length === 0;
+        status.textContent = users.length ? '請先查詢。' : '資料庫沒有可選的使用者。';
+      } catch (error) {
+        status.textContent = error.message;
+      }
+    }
+
+    loadUsers();
+
+    user.onchange = () => {
+      create.hidden = true;
+      list.replaceChildren();
+      count.style.display = 'none';
+      status.textContent = '請查詢這位使用者。';
+    };
+
+    read.onclick = () => run(lookup);
+
+    form.onsubmit = event => {
+      event.preventDefault();
+      run(async () => {
+        const fields = Object.fromEntries(new FormData(form));
+        await api('', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...fields,
+            frequency: fields.frequency || null,
+            userId: Number(user.value)
+          })
+        });
+        form.reset();
+        try { await lookup(); } catch { status.textContent = '已新增，重新讀取失敗。請再按查詢。'; }
+      });
+    };
+  </script>
+</body>
+</html>
