@@ -1,4 +1,7 @@
-.env
-.env.deploy
-.vercel
 node_modules/
+
+# 所有 .env 檔案都不進版控，但保留要給同學看的範本
+.env*
+!.env.example
+
+.vercel
