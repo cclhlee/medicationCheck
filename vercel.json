@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/users", "dest": "/api/users.js" },
+    { "src": "/api/schedules", "dest": "/api/schedules.js" },
+    { "src": "/", "dest": "/index.html" }
+  ]
+}
