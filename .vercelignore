@@ -1,0 +1,6 @@
+# Vercel 走 api/ 底下的 serverless functions，不需要本機的常駐伺服器與課堂文件。
+# 這些檔案若上傳，會被當成靜態資源公開下載。
+server.js
+seed.sql
+README.md
+.env.example

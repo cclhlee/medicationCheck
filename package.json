@@ -1,11 +1,16 @@
 {
   "private": true,
+  "engines": {
+    "node": ">=22.9"
+  },
   "scripts": {
     "start": "node --env-file-if-exists=.env server.js",
     "demo": "node server.js --demo"
   },
   "dependencies": {
-    "@electric-sql/pglite": "^0.5.16",
     "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.16"
   }
 }
